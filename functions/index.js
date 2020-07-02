@@ -2,6 +2,8 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
 const app = require('express')();
+const { getAllScreams } = require('./handlers/screams');
+
 admin.initializeApp();
 
 const config = {
@@ -16,29 +18,12 @@ const config = {
 };
 
 const firebase = require('firebase');
+const { getAllScreams } = require('./handlers/screams');
 firebase.initializeApp(config);
 
 const db = admin.firestore();
 
-app.get('/screams', (req, res) => {
-    db
-    .collection('screams')
-    .orderBy('createdAt', 'desc' )
-    .get()
-    .then((data) => {
-          let screams = [];
-          data.forEach((doc) => {
-              screams.push({
-                  screamId: doc.id,
-                  body: doc.data().body,
-                  userHandle: doc.data().userHandle,
-                  createdAt: doc.data().createdAt
-              });
-          });
-          return res.json(screams);
-      })
-      .catch((err) => console.error(err));
-})
+app.get('/screams', getAllScreams )
 
 const FBAuth = (req, res, next) => {
     let idToken;
